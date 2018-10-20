@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'line/bot'
+require 'pry'
 
 # 微小変更部分！確認用。
 get '/' do
@@ -32,10 +33,15 @@ post '/callback' do
             text: event.message['text']
         }
         client.reply_message(event['replyToken'], message)
-      when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
+      when Line::Bot::Event::MessageType::Image
         response = client.get_message_content(event.message['id'])
         tf = Tempfile.open("content")
         tf.write(response.body)
+        message = {
+            type: 'text',
+            text: '画像送信完了'
+        }
+        client.reply_message(event['replyToken'], message)
       end
     end
   }
